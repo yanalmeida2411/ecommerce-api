@@ -1,0 +1,47 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.0'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.ecommerce'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral() // ESSA LINHA É OBRIGATÓRIA para o Gradle baixar as bibliotecas
+}
+
+dependencies {
+	// Web e JPA
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Segurança e JWT
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'com.auth0:java-jwt:4.4.0'
+
+	// Swagger (SpringDoc) - Versão correta para Spring Boot 3
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+
+	// Banco de Dados e Utilitários
+	runtimeOnly 'org.postgresql:postgresql'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// DevTools para reinicialização automática
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
