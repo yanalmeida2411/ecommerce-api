@@ -1,8 +1,8 @@
 package com.ecommerce.api.controller;
 
 import com.ecommerce.api.dtos.CartRequestDto;
-import com.ecommerce.api.dtos.CartResponseDto;
 import com.ecommerce.api.dtos.CartUpdateQuantityDto;
+import com.ecommerce.api.dtos.FullCartResponseDto;
 import com.ecommerce.api.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -36,7 +35,7 @@ public class CartController {
             )
     })
     @PostMapping()
-    public ResponseEntity<CartResponseDto> addItem(
+    public ResponseEntity<FullCartResponseDto> addItem(
             @RequestBody @Valid CartRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartService.addToCart(dto));
     }
@@ -52,8 +51,8 @@ public class CartController {
             )
     })
     @GetMapping()
-    public ResponseEntity<List<CartResponseDto>> getCartByUser() {
-        return ResponseEntity.ok(cartService.findCartsByUser());
+    public ResponseEntity<FullCartResponseDto> getMyCart() {
+        return ResponseEntity.ok(cartService.findCartTotalByUser());
     }
 
     @Operation(summary = "Atualiza um carrinho")
@@ -64,18 +63,17 @@ public class CartController {
                             examples = @ExampleObject(value = "{ \"message\": \"Token ausente ou expirado\"}")
                     )
             ),
-            @ApiResponse(responseCode = "404", description = "Produto não encontrado para exclusão",
+            @ApiResponse(responseCode = "404", description = "Produto não encontrado para atualização",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Erro ao deletar: ID inválido\"}")
                     )
             )
     })
-    @PatchMapping("/{cartId}")
-    public ResponseEntity<CartResponseDto> updateQuantity(
-            @PathVariable UUID cartId,
+    @PatchMapping("/upateQuantity")
+    public ResponseEntity<FullCartResponseDto> updateQuantity(
             @Valid @RequestBody CartUpdateQuantityDto quantity) {
 
-        CartResponseDto result = cartService.updateCartQuantity(cartId, quantity);
+        FullCartResponseDto result = cartService.updateCartQuantity(quantity);
 
         return result != null ? ResponseEntity.ok(result) : ResponseEntity.noContent().build();
     }

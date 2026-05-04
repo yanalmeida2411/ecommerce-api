@@ -1,10 +1,11 @@
 package com.ecommerce.api.service;
 
 import com.ecommerce.api.dtos.CartRequestDto;
-import com.ecommerce.api.dtos.CartResponseDto;
 import com.ecommerce.api.dtos.CartUpdateQuantityDto;
+import com.ecommerce.api.dtos.FullCartResponseDto;
 import com.ecommerce.api.mapper.CartMapper;
 import com.ecommerce.api.model.CartEntity;
+import com.ecommerce.api.model.CartItemEntity;
 import com.ecommerce.api.model.ProductEntity;
 import com.ecommerce.api.model.UserEntity;
 import com.ecommerce.api.repository.CartRepository;
@@ -17,13 +18,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CartService {
-
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
@@ -32,77 +33,75 @@ public class CartService {
     private UserEntity getAuthenticatedUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário logado não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
     }
 
-    public List<CartResponseDto> findCartsByUser() {
-        UserEntity currentUser = getAuthenticatedUser();
-        return cartRepository.findByUserId_Id(currentUser.getId()).stream()
-                .map(cartMapper::toResponseDto)
-                .toList();
-    }
-
-    private CartEntity createNewItem(UserEntity user, CartRequestDto dto) {
-        ProductEntity product = productRepository.findById(dto.productId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado"));
-
-        return CartEntity.builder()
-                .userId(user)
-                .productId(product)
-                .price(product.getPrice())
-                .quantity(dto.quantity())
-                .sessionId(user.getId())
-                .build();
+    @Transactional(readOnly = true)
+    public FullCartResponseDto findCartTotalByUser() {
+        UserEntity user = getAuthenticatedUser();
+        CartEntity cart = cartRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CREATED, "Carrinho vazio"));
+        return cartMapper.toFullResponseDto(cart);
     }
 
     @Transactional
-    public CartResponseDto addToCart(CartRequestDto dto) {
+    public FullCartResponseDto addToCart(CartRequestDto dto) {
         UserEntity currentUser = getAuthenticatedUser();
 
-        CartEntity cartItem = cartRepository.findByUserId_IdAndProductId_Id(currentUser.getId(), dto.productId())
-                .map(item -> {
-                    item.incrementQuantity(dto.quantity());
-                    return item;
-                })
-                .orElseGet(() -> createNewItem(currentUser, dto));
+        CartEntity cart = cartRepository.findByUserId(currentUser.getId())
+                .orElseGet(() -> cartRepository.save(CartEntity.builder().user(currentUser).items(new ArrayList<>()).build()));
 
-        return cartMapper.toResponseDto(cartRepository.save(cartItem));
+        Optional<CartItemEntity> existingItem = cart.getItems().stream()
+                .filter(item -> item.getProduct().getId().equals(dto.productId()))
+                .findFirst();
+
+        if (existingItem.isPresent()) {
+            existingItem.get().setQuantity(existingItem.get().getQuantity() + dto.quantity());
+        } else {
+            ProductEntity product = productRepository.findById(dto.productId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto inexistente"));
+
+            cart.getItems().add(CartItemEntity.builder()
+                    .cart(cart)
+                    .product(product)
+                    .quantity(dto.quantity())
+                    .priceAtPurchase(product.getPrice())
+                    .build());
+        }
+
+        return cartMapper.toFullResponseDto(cartRepository.save(cart));
     }
 
-
     @Transactional
-    public CartResponseDto updateCartQuantity(UUID cartId, CartUpdateQuantityDto dto) {
+    public FullCartResponseDto updateCartQuantity(CartUpdateQuantityDto dto) {
         UserEntity currentUser = getAuthenticatedUser();
 
-        CartEntity cartItem = cartRepository.findById(cartId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item do carrinho não encontrado"));
+        CartEntity cart = cartRepository.findByUserId(currentUser.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Carrinho não encontrado"));
 
-        if (!cartItem.getUserId().getId().equals(currentUser.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Ação não permitida para este usuário");
-        }
+        CartItemEntity item = cart.getItems().stream()
+                .filter(i -> i.getProduct().getId().equals(dto.productId()))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado no carrinho"));
 
-        if (!cartItem.getProductId().getId().equals(dto.productId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O produto informado não corresponde ao item do carrinho");
-        }
+        item.setQuantity(dto.quantity());
 
-        cartItem.updateQuantity(dto);
-
-        return cartMapper.toResponseDto(cartRepository.save(cartItem));
+        return cartMapper.toFullResponseDto(cartRepository.save(cart));
     }
 
     @Transactional
     public void removeProductCompletely(UUID productId) {
-        UserEntity currentUser = getAuthenticatedUser();
+        UserEntity user = getAuthenticatedUser();
+        CartEntity cart = cartRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Carrinho não encontrado"));
 
-        CartEntity item = cartRepository.findByUserId_IdAndProductId_Id(currentUser.getId(), productId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não está no seu carrinho"));
-
-        cartRepository.delete(item);
+        cart.getItems().removeIf(item -> item.getProduct().getId().equals(productId));
+        cartRepository.save(cart);
     }
 
     @Transactional
     public void clearFullCart() {
-        UserEntity currentUser = getAuthenticatedUser();
-        cartRepository.deleteByUserId(currentUser.getId());
+        UserEntity user = getAuthenticatedUser();
+        cartRepository.deleteByUserId(user.getId());
     }
 }
