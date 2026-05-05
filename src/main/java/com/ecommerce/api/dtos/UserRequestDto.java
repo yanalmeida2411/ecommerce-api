@@ -10,7 +10,9 @@ public record UserRequestDto(
 
         @Schema(example = "Silva") @NotBlank String lastName,
 
-        @Schema(example = "joao@email.com") @Email @NotBlank String email,
+        @Schema(example = "joao@email.com") @Email(
+                message = "O usuário deve ter um email válido.")
+        @NotBlank String email,
 
         @Schema(example = "Senha@123")
         @NotBlank(message = "A senha é obrigatória")

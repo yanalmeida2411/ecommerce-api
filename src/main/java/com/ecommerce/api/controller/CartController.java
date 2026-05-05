@@ -26,6 +26,7 @@ public class CartController {
 
     private final CartService cartService;
 
+    @Operation(summary = "Cria um novo carrinho por usuário.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Carrinho criado com sucesso"),
             @ApiResponse(responseCode = "401", description = "Não autenticado",
@@ -40,7 +41,7 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartService.addToCart(dto));
     }
 
-    @Operation(summary = "Busca carrinhos disponíveis", description = "Retorna um carrinho.")
+    @Operation(summary = "Busca carrinhos disponíveis")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Carrinho encontrado.")
             ,

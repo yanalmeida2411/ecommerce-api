@@ -26,14 +26,14 @@ public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "Busca todos os usuários", description = "Retorna uma lista com todos os usuários cadastrados.")
+    @Operation(summary = "Busca todos os usuários")
     @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> listAll() {
         return ResponseEntity.ok(userService.findAllUsers());
     }
 
-    @Operation(summary = "Busca um usuário específico", description = "Retorna os detalhes de um usuário via UUID.")
+    @Operation(summary = "Busca um usuário específico")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário encontrado"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
@@ -47,15 +47,13 @@ public class UserController {
         return ResponseEntity.ok(userService.findUserById(userId));
     }
 
-    @Operation(summary = "Cria um novo usuário", description = "Cadastra um novo usuário no sistema.")
+    @Operation(summary = "Cria um novo usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos ou e-mail já cadastrado",
                     content = @Content(mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(name = "E-mail Duplicado", value = "{ \"message\": \"Este e-mail já está em uso\"}"),
-                                    @ExampleObject(name = "Erro de Validação", value = "{ \"message\": \"A senha deve ter no mínimo 6 caracteres\"}")
-                            }
+                            examples =
+                            @ExampleObject(value = "{ \"message\": \"Este e-mail já está em uso ou a senha deve ter no mínimo 6 caracteres\"}")
                     )
             )
     })
@@ -64,7 +62,7 @@ public class UserController {
         return ResponseEntity.status(201).body(userService.createUser(userDto));
     }
 
-    @Operation(summary = "Atualiza um usuário", description = "Atualiza parcialmente os dados de um usuário.")
+    @Operation(summary = "Atualiza os dados de um usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
@@ -78,7 +76,7 @@ public class UserController {
         return ResponseEntity.ok(userService.updatingUser(userId, user));
     }
 
-    @Operation(summary = "Deleta um usuário", description = "Remove um usuário permanentemente do sistema.")
+    @Operation(summary = "Deleta um usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado",

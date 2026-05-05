@@ -47,7 +47,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.findProductById(productId));
     }
 
-    @Operation(summary = "Busca produtos por categoria", description = "Retorna uma lista de produtos pertencentes a uma categoria.")
+    @Operation(summary = "Busca produtos por categoria")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Produtos encontrados."),
             @ApiResponse(responseCode = "404", description = "Categoria inexsitente.",
@@ -62,15 +62,13 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @Operation(summary = "Cria um novo produto", description = "Requer token JWT com permissões administrativas.")
+    @Operation(summary = "Cria um novo produto")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Produto criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro na validação ou nome duplicado",
                     content = @Content(mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(name = "Nome Duplicado", value = "{ \"message\": \"Já existe um produto com este nome\"}"),
-                                    @ExampleObject(name = "Dados Inválidos", value = "{ \"message\": \"O preço deve ser maior que zero\"}")
-                            }
+                            examples = @ExampleObject(
+                                    value = "{ \"message\": \"Já existe um produto com este nome ou O preço deve ser maior que zero\"}")
                     )
             ),
             @ApiResponse(responseCode = "401", description = "Não autenticado",

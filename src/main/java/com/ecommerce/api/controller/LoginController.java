@@ -25,7 +25,7 @@ public class LoginController {
 
     private final LoginService loginService;
 
-    @Operation(summary = "Realiza o login", description = "Gera um token JWT válido por 1 hora.")
+    @Operation(summary = "Realiza o login")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login efetuado com sucesso"),
             @ApiResponse(responseCode = "401", description = "Credenciais inválidas",
@@ -35,12 +35,12 @@ public class LoginController {
             )
     })
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto body) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto body) {
         LoginResponseDto response = loginService.authenticate(body);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Validar token", description = "Verifica se o usuário atual está autenticado.")
+    @Operation(summary = "Verifica se o usuário atual está autenticado.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Acesso autorizado",
                     content = @Content(mediaType = "application/json",
