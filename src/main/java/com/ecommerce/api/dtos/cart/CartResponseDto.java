@@ -1,4 +1,4 @@
-package com.ecommerce.api.dtos;
+package com.ecommerce.api.dtos.cart;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -11,7 +11,7 @@ public record CartResponseDto(
         @Schema UUID productId,
         @Schema String productName,
         @Schema BigDecimal price,
-        @Schema(example = "2") Long quantity,
+        @Schema Long quantity,
         @Schema BigDecimal total // price * quantity
 ) {
 }

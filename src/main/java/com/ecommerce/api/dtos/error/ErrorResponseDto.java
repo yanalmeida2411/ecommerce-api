@@ -1,4 +1,4 @@
-package com.ecommerce.api.dtos;
+package com.ecommerce.api.dtos.error;
 
 
 public record ErrorResponseDto(

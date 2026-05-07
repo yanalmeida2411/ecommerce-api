@@ -1,11 +1,10 @@
 package com.ecommerce.api.service;
 
-import com.ecommerce.api.dtos.LoginRequestDto;
-import com.ecommerce.api.dtos.LoginResponseDto;
+import com.ecommerce.api.dtos.user.LoginRequestDto;
+import com.ecommerce.api.dtos.user.LoginResponseDto;
 import com.ecommerce.api.model.UserEntity;
 import com.ecommerce.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

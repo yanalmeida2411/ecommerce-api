@@ -1,4 +1,4 @@
-package com.ecommerce.api.dtos;
+package com.ecommerce.api.dtos.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

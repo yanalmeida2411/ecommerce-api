@@ -1,5 +1,7 @@
 package com.ecommerce.api.model;
 
+import com.ecommerce.api.enums.OrderStatus;
+import com.ecommerce.api.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,26 +19,25 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(toBuilder = true)
 public class PaymentsEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     private UUID id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false, unique = true)
-    private OrdersEntity order_id;
+    private OrdersEntity order;
 
     @Column(name = "status", nullable = false)
-    private String status;
+    private OrderStatus status;
 
     @Column(name = "total_amount", nullable = false)
     private BigDecimal total_amount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
-    private String payment_method;
-
-    @Column(name = "provider", nullable = false)
-    private String provider;
+    private PaymentMethod payment_method;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
@@ -45,5 +46,4 @@ public class PaymentsEntity {
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
 }

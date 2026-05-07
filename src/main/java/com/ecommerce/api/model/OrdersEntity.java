@@ -1,5 +1,6 @@
 package com.ecommerce.api.model;
 
+import com.ecommerce.api.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -7,6 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,24 +26,24 @@ public class OrdersEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @OneToOne(mappedBy = "order_id")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<OrderItemEntity> items = new ArrayList<>();
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private PaymentsEntity payment;
 
-    @Column(name = "order_number", nullable = false, unique = true)
-    private String order_number;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    @Builder.Default
+    private OrderStatus status = OrderStatus.PENDING;
 
     @Column(name = "total_amount", nullable = false)
     private BigDecimal total_amount;
-
-    @Column(name = "payment_method", nullable = false)
-    private String payment_method;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
@@ -50,4 +53,16 @@ public class OrdersEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public void assignItems(List<OrderItemEntity> items) {
+        this.items = items;
+    }
+
+    public void assignPayment(PaymentsEntity payment) {
+        this.payment = payment;
+    }
 }
+

@@ -1,5 +1,6 @@
 package com.ecommerce.api.config;
 
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +21,9 @@ public class OpenApiConfig {
                 .tags(List.of(
                         new Tag().name("Auth"),
                         new Tag().name("Users"),
-                        new Tag().name("Product"),
-                        new Tag().name("Cart")
+                        new Tag().name("Products"),
+                        new Tag().name("Cart"),
+                        new Tag().name("Orders")
                 ))
                 .info(new Info()
                         .title("E-commerce API")

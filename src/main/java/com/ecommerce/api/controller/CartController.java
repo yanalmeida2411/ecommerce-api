@@ -1,8 +1,8 @@
 package com.ecommerce.api.controller;
 
-import com.ecommerce.api.dtos.CartRequestDto;
-import com.ecommerce.api.dtos.CartUpdateQuantityDto;
-import com.ecommerce.api.dtos.FullCartResponseDto;
+import com.ecommerce.api.dtos.cart.CartRequestDto;
+import com.ecommerce.api.dtos.cart.CartUpdateQuantityDto;
+import com.ecommerce.api.dtos.cart.FullCartResponseDto;
 import com.ecommerce.api.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,11 +29,10 @@ public class CartController {
     @Operation(summary = "Cria um novo carrinho por usuário.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Carrinho criado com sucesso"),
-            @ApiResponse(responseCode = "401", description = "Não autenticado",
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"message\": \"Token ausente ou expirado\"}")
-                    )
-            )
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
     })
     @PostMapping()
     public ResponseEntity<FullCartResponseDto> addItem(
@@ -45,11 +44,10 @@ public class CartController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Carrinho encontrado.")
             ,
-            @ApiResponse(responseCode = "401", description = "Não autenticado",
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"message\": \"Token ausente ou expirado\"}")
-                    )
-            )
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    ))
     })
     @GetMapping()
     public ResponseEntity<FullCartResponseDto> getMyCart() {
@@ -59,11 +57,10 @@ public class CartController {
     @Operation(summary = "Atualiza um carrinho")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Carrinho atualizado"),
-            @ApiResponse(responseCode = "401", description = "Não autenticado",
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"message\": \"Token ausente ou expirado\"}")
-                    )
-            ),
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
             @ApiResponse(responseCode = "404", description = "Produto não encontrado para atualização",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Erro ao deletar: ID inválido\"}")
@@ -82,18 +79,17 @@ public class CartController {
     @Operation(summary = "Deleta um produto do carrinho")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Produto removido"),
-            @ApiResponse(responseCode = "401", description = "Não autenticado",
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"message\": \"Token ausente ou expirado\"}")
-                    )
-            ),
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
             @ApiResponse(responseCode = "404", description = "Produto não encontrado para exclusão",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Erro ao deletar: ID inválido\"}")
                     )
             )
     })
-    @DeleteMapping("/products/{productId}")
+    @DeleteMapping("/{productId}")
     public ResponseEntity<Void> removeProduct(@PathVariable UUID productId) {
         cartService.removeProductCompletely(productId);
         return ResponseEntity.noContent().build();
@@ -102,11 +98,10 @@ public class CartController {
     @Operation(summary = "Deleta todos os produtos do carrinho")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Produtos removidos do carrinho removido"),
-            @ApiResponse(responseCode = "401", description = "Não autenticado",
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"message\": \"Token ausente ou expirado\"}")
-                    )
-            ),
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
             @ApiResponse(responseCode = "404", description = "Carrinho não encontrado para exclusão",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Erro ao deletar: ID inválido\"}")

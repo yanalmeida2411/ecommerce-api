@@ -1,7 +1,7 @@
 package com.ecommerce.api.controller;
 
-import com.ecommerce.api.dtos.LoginRequestDto;
-import com.ecommerce.api.dtos.LoginResponseDto;
+import com.ecommerce.api.dtos.user.LoginRequestDto;
+import com.ecommerce.api.dtos.user.LoginResponseDto;
 import com.ecommerce.api.service.LoginService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;

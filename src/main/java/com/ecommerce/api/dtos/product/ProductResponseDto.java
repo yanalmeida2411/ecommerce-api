@@ -1,4 +1,4 @@
-package com.ecommerce.api.dtos;
+package com.ecommerce.api.dtos.product;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ProductResponseDto(
-        @Schema(example = "62h3g5jh2315hb") UUID id,
+        @Schema(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") UUID id,
         @Schema(example = "Teclado Mecânico RGB") @NotBlank String name,
         @Schema(example = "250") @Positive @NotNull BigDecimal price,
         @Schema(example = "Periféricos") @NotBlank String category,

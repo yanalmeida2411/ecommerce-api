@@ -1,6 +1,6 @@
 package com.ecommerce.api.model;
 
-import com.ecommerce.api.dtos.UserRequestDto;
+import com.ecommerce.api.dtos.user.UserRequestDto;
 import com.ecommerce.api.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;

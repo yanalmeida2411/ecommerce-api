@@ -1,7 +1,7 @@
 package com.ecommerce.api.controller;
 
-import com.ecommerce.api.dtos.ProductRequestDto;
-import com.ecommerce.api.dtos.ProductResponseDto;
+import com.ecommerce.api.dtos.product.ProductRequestDto;
+import com.ecommerce.api.dtos.product.ProductResponseDto;
 import com.ecommerce.api.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
-@Tag(name = "Product")
+@Tag(name = "Products")
 @AllArgsConstructor
 public class ProductController {
 
@@ -71,11 +70,10 @@ public class ProductController {
                                     value = "{ \"message\": \"Já existe um produto com este nome ou O preço deve ser maior que zero\"}")
                     )
             ),
-            @ApiResponse(responseCode = "401", description = "Não autenticado",
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"message\": \"Token ausente ou expirado\"}")
-                    )
-            )
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
     })
     @PostMapping
     public ResponseEntity<ProductResponseDto> createProduct(@Valid @RequestBody ProductRequestDto productDto) {
@@ -85,6 +83,10 @@ public class ProductController {
     @Operation(summary = "Atualiza um produto")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Produto atualizado"),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
             @ApiResponse(responseCode = "404", description = "Produto não encontrado",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Produto não existe para atualização\"}")
@@ -99,6 +101,10 @@ public class ProductController {
     @Operation(summary = "Deleta um produto")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Produto removido"),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
             @ApiResponse(responseCode = "404", description = "Produto não encontrado para exclusão",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Erro ao deletar: ID inválido\"}")

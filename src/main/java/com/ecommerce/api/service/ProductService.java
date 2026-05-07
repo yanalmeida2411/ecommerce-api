@@ -1,13 +1,12 @@
 package com.ecommerce.api.service;
 
-import com.ecommerce.api.dtos.ProductRequestDto;
-import com.ecommerce.api.dtos.ProductResponseDto;
+import com.ecommerce.api.dtos.product.ProductRequestDto;
+import com.ecommerce.api.dtos.product.ProductResponseDto;
 import com.ecommerce.api.mapper.ProductMapper;
 import com.ecommerce.api.model.ProductEntity;
 import com.ecommerce.api.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

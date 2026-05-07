@@ -1,15 +1,12 @@
 package com.ecommerce.api.config;
 
-import com.ecommerce.api.dtos.ErrorResponseDto;
-import org.springframework.http.HttpStatus;
+import com.ecommerce.api.dtos.error.ErrorResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class RestExceptionHandler {

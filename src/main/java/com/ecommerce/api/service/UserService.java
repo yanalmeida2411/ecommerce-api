@@ -1,7 +1,7 @@
 package com.ecommerce.api.service;
 
-import com.ecommerce.api.dtos.UserRequestDto;
-import com.ecommerce.api.dtos.UserResponseDto;
+import com.ecommerce.api.dtos.user.UserRequestDto;
+import com.ecommerce.api.dtos.user.UserResponseDto;
 import com.ecommerce.api.enums.UserRole;
 import com.ecommerce.api.mapper.UserMapper;
 import com.ecommerce.api.model.UserEntity;

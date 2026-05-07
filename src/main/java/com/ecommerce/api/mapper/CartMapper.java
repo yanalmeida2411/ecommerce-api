@@ -1,7 +1,7 @@
 package com.ecommerce.api.mapper;
 
-import com.ecommerce.api.dtos.CartResponseDto;
-import com.ecommerce.api.dtos.FullCartResponseDto;
+import com.ecommerce.api.dtos.cart.CartResponseDto;
+import com.ecommerce.api.dtos.cart.FullCartResponseDto;
 import com.ecommerce.api.model.CartEntity;
 import com.ecommerce.api.model.CartItemEntity;
 import org.springframework.stereotype.Component;

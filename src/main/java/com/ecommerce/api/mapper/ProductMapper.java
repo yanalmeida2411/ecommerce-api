@@ -1,6 +1,6 @@
 package com.ecommerce.api.mapper;
 
-import com.ecommerce.api.dtos.ProductResponseDto;
+import com.ecommerce.api.dtos.product.ProductResponseDto;
 import com.ecommerce.api.model.ProductEntity;
 import org.springframework.stereotype.Component;
 

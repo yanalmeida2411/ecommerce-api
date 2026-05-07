@@ -1,11 +1,12 @@
 package com.ecommerce.api.model;
 
-import com.ecommerce.api.dtos.ProductRequestDto;
+import com.ecommerce.api.dtos.product.ProductRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.web.client.RestClientException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -51,18 +52,18 @@ public class ProductEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public void updateStock(Long quantityChange) {
-        if (this.quantity + quantityChange < 0) {
-            throw new RestClientException("Estoque insuficiente para o produto: " + this.name);
-        }
-        this.quantity += quantityChange;
-    }
-
     public void updateDetails(ProductRequestDto dto) {
         if (dto.name() != null) this.name = dto.name();
         if (dto.price() != null) this.price = dto.price();
         if (dto.category() != null) this.category = dto.category();
         if (dto.quantity() != null) this.quantity = dto.quantity();
         if (dto.description() != null) this.description = dto.description();
+    }
+
+    public void subtractStock(Long quantityToSubtract) {
+        if (this.quantity < quantityToSubtract) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estoque insuficiente para o produto: " + this.name);
+        }
+        this.quantity -= quantityToSubtract;
     }
 }

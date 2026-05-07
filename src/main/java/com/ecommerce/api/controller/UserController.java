@@ -1,7 +1,7 @@
 package com.ecommerce.api.controller;
 
-import com.ecommerce.api.dtos.UserRequestDto;
-import com.ecommerce.api.dtos.UserResponseDto;
+import com.ecommerce.api.dtos.user.UserRequestDto;
+import com.ecommerce.api.dtos.user.UserResponseDto;
 import com.ecommerce.api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +26,13 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "Busca todos os usuários")
-    @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
+    })
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> listAll() {
         return ResponseEntity.ok(userService.findAllUsers());
@@ -36,6 +41,10 @@ public class UserController {
     @Operation(summary = "Busca um usuário específico")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário encontrado"),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Usuário com ID informado não existe\"}")
@@ -65,6 +74,10 @@ public class UserController {
     @Operation(summary = "Atualiza os dados de um usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso"),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Não foi possível atualizar: usuário inexistente\"}")
@@ -79,6 +92,10 @@ public class UserController {
     @Operation(summary = "Deleta um usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso"),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Tentativa de exclusão falhou: ID não encontrado\"}")
