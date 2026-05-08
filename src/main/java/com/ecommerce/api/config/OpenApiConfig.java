@@ -23,7 +23,8 @@ public class OpenApiConfig {
                         new Tag().name("Users"),
                         new Tag().name("Products"),
                         new Tag().name("Cart"),
-                        new Tag().name("Orders")
+                        new Tag().name("Orders"),
+                        new Tag().name("Payments")
                 ))
                 .info(new Info()
                         .title("E-commerce API")

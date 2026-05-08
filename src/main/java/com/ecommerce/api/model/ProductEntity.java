@@ -60,6 +60,13 @@ public class ProductEntity {
         if (dto.description() != null) this.description = dto.description();
     }
 
+    public void addStock(Long quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("A quantidade a ser adicionada não pode ser negativa");
+        }
+        this.quantity += quantity;
+    }
+
     public void subtractStock(Long quantityToSubtract) {
         if (this.quantity < quantityToSubtract) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estoque insuficiente para o produto: " + this.name);

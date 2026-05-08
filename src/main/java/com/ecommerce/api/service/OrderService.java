@@ -3,6 +3,7 @@ package com.ecommerce.api.service;
 import com.ecommerce.api.dtos.order.FullOrderResponseDto;
 import com.ecommerce.api.dtos.order.OrderRequestDto;
 import com.ecommerce.api.enums.OrderStatus;
+import com.ecommerce.api.enums.PaymentStatus;
 import com.ecommerce.api.enums.UserRole;
 import com.ecommerce.api.mapper.OrderMapper;
 import com.ecommerce.api.model.*;
@@ -41,7 +42,7 @@ public class OrderService {
 
         OrdersEntity order = OrdersEntity.builder()
                 .user(user)
-                .status(OrderStatus.PENDING)
+                .orderStatus(OrderStatus.PENDING)
                 .total_amount(calculateTotal(cart))
                 .build();
 
@@ -62,14 +63,14 @@ public class OrderService {
 
         PaymentsEntity payment = PaymentsEntity.builder()
                 .order(order)
-                .status(OrderStatus.PENDING)
-                .payment_method(orderRequestDto.paymentMethod())
-                .total_amount(order.getTotal_amount())
+                .paymentStatus(PaymentStatus.PENDING)
+                .paymentMethod(orderRequestDto.paymentMethod())
+                .totalAmount(order.getTotal_amount())
                 .build();
 
         order.assignPayment(payment);
 
-        OrdersEntity savedOrder = orderRepository.save(order);
+        OrdersEntity savedOrder = orderRepository.saveAndFlush(order);
 
         cartRepository.delete(cart);
 

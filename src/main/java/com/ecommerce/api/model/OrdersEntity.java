@@ -38,9 +38,9 @@ public class OrdersEntity {
     private PaymentsEntity payment;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "order_status", nullable = false)
     @Builder.Default
-    private OrderStatus status = OrderStatus.PENDING;
+    private OrderStatus orderStatus = OrderStatus.PENDING;
 
     @Column(name = "total_amount", nullable = false)
     private BigDecimal total_amount;
@@ -54,7 +54,7 @@ public class OrdersEntity {
     private LocalDateTime updatedAt;
 
     public void updateStatus(OrderStatus status) {
-        this.status = status;
+        this.orderStatus = status;
     }
 
     public void assignItems(List<OrderItemEntity> items) {
@@ -63,6 +63,16 @@ public class OrdersEntity {
 
     public void assignPayment(PaymentsEntity payment) {
         this.payment = payment;
+    }
+
+    public void markAsProcessing() {
+        if (this.orderStatus == OrderStatus.PENDING) {
+            this.orderStatus = OrderStatus.PROCESSING;
+        }
+    }
+
+    public void cancelOrder() {
+        this.orderStatus = OrderStatus.FAILED;
     }
 }
 

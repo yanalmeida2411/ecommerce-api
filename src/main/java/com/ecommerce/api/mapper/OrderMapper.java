@@ -24,8 +24,8 @@ public class OrderMapper {
                 order.getId(),
                 itemDtos,
                 order.getTotal_amount(),
-                order.getStatus(),
-                order.getPayment() != null ? order.getPayment().getPayment_method() : null,
+                order.getOrderStatus(),
+                order.getPayment() != null ? order.getPayment().getPaymentMethod() : null,
                 order.getCreatedAt()
         );
     }
