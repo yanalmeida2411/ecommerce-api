@@ -5,6 +5,7 @@ import com.ecommerce.api.dtos.product.ProductResponseDto;
 import com.ecommerce.api.mapper.ProductMapper;
 import com.ecommerce.api.model.ProductEntity;
 import com.ecommerce.api.repository.ProductRepository;
+import com.ecommerce.api.utils.GetAuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final GetAuthenticatedUser getAuthenticatedUser;
 
     public List<ProductResponseDto> findAllProduct() {
         return productRepository.findAll().stream()
@@ -71,6 +73,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto updatingProduct(UUID productId, ProductRequestDto dto) {
+        getAuthenticatedUser.validateAdminRole();
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado"));
 
