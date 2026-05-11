@@ -7,6 +7,7 @@ import com.ecommerce.api.mapper.PaymentMapper;
 import com.ecommerce.api.model.OrdersEntity;
 import com.ecommerce.api.model.PaymentsEntity;
 import com.ecommerce.api.model.UserEntity;
+import com.ecommerce.api.repository.OrderRepository;
 import com.ecommerce.api.repository.PaymentRepository;
 import com.ecommerce.api.utils.GetAuthenticatedUser;
 import lombok.RequiredArgsConstructor;
@@ -25,17 +26,18 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
     private final GetAuthenticatedUser getAuthenticatedUser;
+    private final OrderRepository orderRepository;
 
 
     @Transactional
     public List<PaymentResponseDto> getAllPayments() {
         UserEntity user = getAuthenticatedUser.getAuthenticatedUser();
 
-        List<PaymentsEntity> orders = (user.getRole() == UserRole.ADMIN)
+        List<PaymentsEntity> payments = (user.getRole() == UserRole.ADMIN)
                 ? paymentRepository.findAll()
                 : paymentRepository.findAllByOrderUserId(user.getId());
 
-        return orders.stream().map(paymentMapper::toResponseDto).toList();
+        return payments.stream().map(paymentMapper::toResponseDto).toList();
     }
 
     @Transactional(readOnly = true)
@@ -94,6 +96,8 @@ public class PaymentService {
         boolean transacaoAprovada = false;
 
         PaymentStatus novoStatus = transacaoAprovada ? PaymentStatus.PAID : PaymentStatus.FAILED;
+
+        orderRepository.delete(payment.getOrder());
 
         return updatePaymentStatus(paymentId, novoStatus);
     }

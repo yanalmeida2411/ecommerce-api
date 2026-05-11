@@ -29,6 +29,10 @@ public class CartController {
     @Operation(summary = "Cria um novo carrinho por usuário.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Carrinho criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "A quantidade do produto deve ser maior que zero.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"A quantidade do produto deve ser maior que zero.\"}")
+                    )),
             @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
@@ -57,6 +61,10 @@ public class CartController {
     @Operation(summary = "Atualiza um carrinho")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Carrinho atualizado"),
+            @ApiResponse(responseCode = "400", description = "A quantidade do produto deve ser maior que zero.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"A quantidade do produto deve ser maior que zero.\"}")
+                    )),
             @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")

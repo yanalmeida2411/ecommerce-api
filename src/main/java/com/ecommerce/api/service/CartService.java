@@ -35,12 +35,15 @@ public class CartService {
     public FullCartResponseDto findCartTotalByUser() {
         UserEntity user = getAuthenticatedUser.getAuthenticatedUser();
         CartEntity cart = cartRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CREATED, "Carrinho vazio"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.OK, "Carrinho vazio"));
         return cartMapper.toFullResponseDto(cart);
     }
 
     @Transactional
     public FullCartResponseDto addToCart(CartRequestDto dto) {
+        if (dto.quantity() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A quantidade deve ser maior que zero.");
+        }
         UserEntity currentUser = getAuthenticatedUser.getAuthenticatedUser();
 
         CartEntity cart = cartRepository.findByUserId(currentUser.getId())
@@ -69,6 +72,9 @@ public class CartService {
 
     @Transactional
     public FullCartResponseDto updateCartQuantity(CartUpdateQuantityDto dto) {
+        if (dto.quantity() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A quantidade deve ser maior que zero.");
+        }
         UserEntity currentUser = getAuthenticatedUser.getAuthenticatedUser();
 
         CartEntity cart = cartRepository.findByUserId(currentUser.getId())

@@ -33,12 +33,12 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getAllPayments());
     }
 
-    @Operation(summary = "Busca pagamento pelo id")
+    @Operation(summary = "Busca pagamento pelo id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pagamento encontrado."),
             @ApiResponse(responseCode = "404", description = "Pagamento inexsitente.",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"message\": \"Pagamento inexistente\"}")
+                            examples = @ExampleObject(value = "{ \"message\": \"Pagamento inexistente.\"}")
                     )
             )
     })
@@ -47,12 +47,12 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getPaymentById(id));
     }
 
-    @Operation(summary = "Busca pagamento pelo id do pedido")
+    @Operation(summary = "Busca pagamento pelo id do pedido.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pagamento encontrado."),
             @ApiResponse(responseCode = "404", description = "Pagamento inexsitente.",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"message\": \"Pagamento inexistente\"}")
+                            examples = @ExampleObject(value = "{ \"message\": \"Pagamento inexistente.\"}")
                     )
             )
     })
@@ -63,14 +63,14 @@ public class PaymentController {
 
     @Operation(summary = "Atualiza um pagamento.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Status do Pagamento atualizado"),
+            @ApiResponse(responseCode = "200", description = "Status do Pagamento atualizado."),
             @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
                     )),
-            @ApiResponse(responseCode = "404", description = "Pagamento não encontrado",
+            @ApiResponse(responseCode = "404", description = "Pagamento não encontrado.",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"message\": \"Pagamento não existe para atualização\"}")
+                            examples = @ExampleObject(value = "{ \"message\": \"Pagamento não existe para atualização.\"}")
                     )
             )
     })
@@ -81,8 +81,25 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.updatePaymentStatus(id, status));
     }
 
+    @Operation(summary = "Cria um pagamento simulado e atualiza o status do pedido e do pagamento.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pagamento efetuado."),
+            @ApiResponse(responseCode = "400", description = "Erro no pagamento.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Erro no pagamento.\"}")
+                    )),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
+            @ApiResponse(responseCode = "404", description = "Pagamento não encontrado.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Pagamento não existe para atualização.\"}")
+                    )
+            )
+    })
     @PostMapping("/{id}/simular")
-    public ResponseEntity<PaymentResponseDto> simular(@PathVariable UUID id) {
+    public ResponseEntity<PaymentResponseDto> simularPagamento(@PathVariable UUID id) {
         return ResponseEntity.ok(paymentService.processarPagamentoSimulado(id));
     }
 }
