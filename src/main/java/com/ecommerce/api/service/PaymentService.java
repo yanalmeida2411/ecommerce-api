@@ -27,7 +27,6 @@ public class PaymentService {
     private final GetAuthenticatedUser getAuthenticatedUser;
 
 
-
     @Transactional
     public List<PaymentResponseDto> getAllPayments() {
         UserEntity user = getAuthenticatedUser.getAuthenticatedUser();
@@ -55,6 +54,7 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponseDto updatePaymentStatus(UUID paymentId, PaymentStatus newPaymentStatus) {
+        getAuthenticatedUser.validateAdminRole();
         PaymentsEntity payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pagamento não encontrado"));
 
@@ -75,11 +75,26 @@ public class PaymentService {
             case REFUNDED -> {
                 order.cancelOrder();
             }
-            default -> { /* PENDING não muda o status da ordem */ }
+            default -> {
+            }
         }
 
         return paymentMapper.toResponseDto(payment);
     }
 
-    // a lógica de processamento
+    @Transactional
+    public PaymentResponseDto processarPagamentoSimulado(UUID paymentId) {
+        PaymentsEntity payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pagamento não encontrado"));
+
+        if (payment.getPaymentStatus() != PaymentStatus.PENDING) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Este pagamento já foi processado anteriormente.");
+        }
+
+        boolean transacaoAprovada = false;
+
+        PaymentStatus novoStatus = transacaoAprovada ? PaymentStatus.PAID : PaymentStatus.FAILED;
+
+        return updatePaymentStatus(paymentId, novoStatus);
+    }
 }

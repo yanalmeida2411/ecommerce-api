@@ -31,6 +31,7 @@ public class OrderService {
 
     @Transactional
     public FullOrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
+        getAuthenticatedUser.validateAdminRole();
         UserEntity user = getAuthenticatedUser.getAuthenticatedUser();
 
         CartEntity cart = cartRepository.findByUserId(user.getId())

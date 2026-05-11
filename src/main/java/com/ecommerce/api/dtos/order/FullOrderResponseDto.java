@@ -12,7 +12,7 @@ public record FullOrderResponseDto(
         UUID orderId,
         List<OrderResponseDto> items,
         BigDecimal totalAmount,
-        OrderStatus status,
+        OrderStatus orderStatus,
         PaymentMethod paymentMethod,
         LocalDateTime createdAt
 ) {

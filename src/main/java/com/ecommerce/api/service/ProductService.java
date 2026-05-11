@@ -52,6 +52,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto createProduct(@NonNull ProductRequestDto productDto) {
+        getAuthenticatedUser.validateAdminRole();
         if (productRepository.findByName(productDto.name()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Produto já cadastrado.");
         }
@@ -89,6 +90,7 @@ public class ProductService {
     }
 
     public void deleteProductById(UUID productId) {
+        getAuthenticatedUser.validateAdminRole();
         if (!productRepository.existsById(productId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado");
         }

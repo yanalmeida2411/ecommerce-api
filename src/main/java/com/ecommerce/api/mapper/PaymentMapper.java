@@ -15,6 +15,7 @@ public class PaymentMapper {
         return new PaymentResponseDto(
                 payment.getId(),
                 orderMapper.toResponseDto(payment.getOrder()),
+                payment.getPaymentStatus(),
                 payment.getCreatedAt()
         );
     }
