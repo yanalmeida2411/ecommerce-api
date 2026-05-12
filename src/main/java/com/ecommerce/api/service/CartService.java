@@ -44,21 +44,35 @@ public class CartService {
         if (dto.quantity() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A quantidade deve ser maior que zero.");
         }
+
         UserEntity currentUser = getAuthenticatedUser.getAuthenticatedUser();
 
+        ProductEntity product = productRepository.findById(dto.productId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto inexistente"));
+
         CartEntity cart = cartRepository.findByUserId(currentUser.getId())
-                .orElseGet(() -> cartRepository.save(CartEntity.builder().user(currentUser).items(new ArrayList<>()).build()));
+                .orElseGet(() -> cartRepository.save(CartEntity.builder()
+                        .user(currentUser)
+                        .items(new ArrayList<>())
+                        .build()));
 
         Optional<CartItemEntity> existingItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(dto.productId()))
                 .findFirst();
 
+        long quantidadeTotalDesejada = dto.quantity();
         if (existingItem.isPresent()) {
-            existingItem.get().setQuantity(existingItem.get().getQuantity() + dto.quantity());
-        } else {
-            ProductEntity product = productRepository.findById(dto.productId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto inexistente"));
+            quantidadeTotalDesejada += existingItem.get().getQuantity();
+        }
 
+        if (product.getQuantity() < quantidadeTotalDesejada) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Estoque insuficiente. Disponível: " + product.getQuantity());
+        }
+
+        if (existingItem.isPresent()) {
+            existingItem.get().setQuantity(quantidadeTotalDesejada);
+        } else {
             cart.getItems().add(CartItemEntity.builder()
                     .cart(cart)
                     .product(product)
@@ -75,8 +89,8 @@ public class CartService {
         if (dto.quantity() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A quantidade deve ser maior que zero.");
         }
-        UserEntity currentUser = getAuthenticatedUser.getAuthenticatedUser();
 
+        UserEntity currentUser = getAuthenticatedUser.getAuthenticatedUser();
         CartEntity cart = cartRepository.findByUserId(currentUser.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Carrinho não encontrado"));
 
@@ -84,6 +98,11 @@ public class CartService {
                 .filter(i -> i.getProduct().getId().equals(dto.productId()))
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado no carrinho"));
+
+        if (item.getProduct().getQuantity() < dto.quantity()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Quantidade solicitada excede o estoque disponível: " + item.getProduct().getQuantity());
+        }
 
         item.setQuantity(dto.quantity());
 
@@ -103,6 +122,12 @@ public class CartService {
     @Transactional
     public void clearFullCart() {
         UserEntity user = getAuthenticatedUser.getAuthenticatedUser();
-        cartRepository.deleteByUserId(user.getId());
+        CartEntity cart = cartRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Carrinho não encontrado"));
+
+        cart.getItems().clear();
+        cartRepository.save(cart);
+
+        cartRepository.delete(cart);
     }
 }

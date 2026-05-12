@@ -85,20 +85,18 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentResponseDto processarPagamentoSimulado(UUID paymentId) {
-        PaymentsEntity payment = paymentRepository.findById(paymentId)
+    public PaymentResponseDto processarPagamentoSimulado(UUID id) {
+        PaymentsEntity payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pagamento não encontrado"));
 
         if (payment.getPaymentStatus() != PaymentStatus.PENDING) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Este pagamento já foi processado anteriormente.");
         }
 
-        boolean transacaoAprovada = false;
+        boolean transacaoAprovada = true;
 
         PaymentStatus novoStatus = transacaoAprovada ? PaymentStatus.PAID : PaymentStatus.FAILED;
 
-        orderRepository.delete(payment.getOrder());
-
-        return updatePaymentStatus(paymentId, novoStatus);
+        return updatePaymentStatus(id, novoStatus);
     }
 }
