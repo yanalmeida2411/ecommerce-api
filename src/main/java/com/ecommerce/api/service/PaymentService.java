@@ -7,7 +7,6 @@ import com.ecommerce.api.mapper.PaymentMapper;
 import com.ecommerce.api.model.OrdersEntity;
 import com.ecommerce.api.model.PaymentsEntity;
 import com.ecommerce.api.model.UserEntity;
-import com.ecommerce.api.repository.OrderRepository;
 import com.ecommerce.api.repository.PaymentRepository;
 import com.ecommerce.api.utils.GetAuthenticatedUser;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +25,6 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
     private final GetAuthenticatedUser getAuthenticatedUser;
-    private final OrderRepository orderRepository;
-
 
     @Transactional
     public List<PaymentResponseDto> getAllPayments() {
@@ -41,22 +38,21 @@ public class PaymentService {
     }
 
     @Transactional(readOnly = true)
-    public PaymentResponseDto getPaymentById(UUID id) {
-        return paymentRepository.findById(id)
-                .map(paymentMapper::toResponseDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pagamento não encontrado"));
-    }
+    public List<PaymentResponseDto> getPaymentById(UUID id) {
 
-    @Transactional(readOnly = true)
-    public PaymentResponseDto getPaymentByOrderId(UUID orderId) {
-        return paymentRepository.findByOrderId(orderId)
-                .map(paymentMapper::toResponseDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pagamento para a ordem " + orderId + " não encontrado"));
+        UserEntity user = getAuthenticatedUser.getAuthenticatedUser();
+
+        List<PaymentsEntity> payments = (user.getRole() == UserRole.ADMIN)
+                ? paymentRepository.findAll()
+                : paymentRepository.findAllByOrderUserId(user.getId());
+
+        return payments.stream().map(paymentMapper::toResponseDto).toList();
     }
 
     @Transactional
     public PaymentResponseDto updatePaymentStatus(UUID paymentId, PaymentStatus newPaymentStatus) {
         getAuthenticatedUser.validateAdminRole();
+
         PaymentsEntity payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pagamento não encontrado"));
 
@@ -85,7 +81,8 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentResponseDto processarPagamentoSimulado(UUID id) {
+    public PaymentResponseDto fakePaymentProcessing(UUID id) {
+        getAuthenticatedUser.validateAdminRole();
         PaymentsEntity payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pagamento não encontrado"));
 

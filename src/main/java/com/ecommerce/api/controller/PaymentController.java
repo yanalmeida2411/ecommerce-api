@@ -27,6 +27,10 @@ public class PaymentController {
     @Operation(summary = "Busca todos os pagamentos.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pagamentos encontrados."),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
     })
     @GetMapping()
     public ResponseEntity<List<PaymentResponseDto>> getAllPayment() {
@@ -36,6 +40,10 @@ public class PaymentController {
     @Operation(summary = "Busca pagamento pelo id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pagamento encontrado."),
+            @ApiResponse(responseCode = "401", description = "Acesso não autorizado.",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"message\": \"Acesso não autorizado.\"}")
+                    )),
             @ApiResponse(responseCode = "404", description = "Pagamento inexsitente.",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"message\": \"Pagamento inexistente.\"}")
@@ -43,22 +51,8 @@ public class PaymentController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<PaymentResponseDto> getPayment(@PathVariable UUID id) {
+    public ResponseEntity<List<PaymentResponseDto>> getPayment(@PathVariable UUID id) {
         return ResponseEntity.ok(paymentService.getPaymentById(id));
-    }
-
-    @Operation(summary = "Busca pagamento pelo id do pedido.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Pagamento encontrado."),
-            @ApiResponse(responseCode = "404", description = "Pagamento inexsitente.",
-                    content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"message\": \"Pagamento inexistente.\"}")
-                    )
-            )
-    })
-    @GetMapping("/order/{orderId}")
-    public ResponseEntity<PaymentResponseDto> getPaymentByOrderId(@PathVariable UUID orderId) {
-        return ResponseEntity.ok(paymentService.getPaymentByOrderId(orderId));
     }
 
     @Operation(summary = "Atualiza um pagamento.")
@@ -98,8 +92,8 @@ public class PaymentController {
                     )
             )
     })
-    @PostMapping("/{id}/simular")
-    public ResponseEntity<PaymentResponseDto> simularPagamento(@PathVariable UUID id) {
-        return ResponseEntity.ok(paymentService.processarPagamentoSimulado(id));
+    @PostMapping("/{id}/simulation")
+    public ResponseEntity<PaymentResponseDto> fakePayment(@PathVariable UUID id) {
+        return ResponseEntity.ok(paymentService.fakePaymentProcessing(id));
     }
 }
